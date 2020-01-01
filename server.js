@@ -2,6 +2,7 @@
 
 var express     = require('express');
 var bodyParser  = require('body-parser');
+var helmet      = require('helmet');
 var expect      = require('chai').expect;
 var cors        = require('cors');
 
@@ -12,6 +13,19 @@ var runner            = require('./test-runner');
 var app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
+
+app.use(helmet.noCache());
+app.use(helmet({
+  hidePoweredBy: {setTo: 'PHP 4.2.0'},
+  frameguard: {action: 'deny'},
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'"],
+      scriptSrc: ["'self'"]
+    }
+  }
+}));
 
 app.use(cors({origin: '*'})); //For FCC testing purposes only
 

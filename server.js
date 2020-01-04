@@ -16,6 +16,7 @@ app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(helmet({
   noCache: { allow: false },
+  referrerPolicy: {policy: 'same-origin'},
   hidePoweredBy: { setTo: 'PHP 4.2.0' },
   frameguard: { action: 'deny' },
   contentSecurityPolicy: {

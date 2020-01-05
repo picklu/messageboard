@@ -89,7 +89,7 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
                         text: 1,
                         created_on: 1,
                         bumped_on: 1,
-                        replies: 1,
+                        replies: { $slice: ['$replies', 0, repliesLimit] },
                         replycount: { $size: '$replies' }
                     }
                 }

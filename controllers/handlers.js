@@ -1,5 +1,4 @@
 var MongoClient = require('mongodb').MongoClient;
-var ObjectId = require('mongodb').ObjectId;
 const MONGODB_CONNECTION_STRING = process.env.DB_LOCAL || process.env.DB;
 const DB_NAME = process.env.DB_NAME;
 
@@ -45,7 +44,7 @@ controllers.insertThread = async function (collectionName, data) {
 }
 
 // Create a new reply to a thread in a board
-controllers.insertReply = async function (collectionName, data) {
+controllers.insertReply = async function (collectionName, threadId, data) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         console.log("== db insert data error ==>", dbConn.error);
@@ -56,7 +55,10 @@ controllers.insertReply = async function (collectionName, data) {
     const collection = db.collection(collectionName);
     let result;
     try {
-        result = await collection.insertOne(data);
+        result = await collection.update(
+            { _id: threadId },
+            { $addToSet: { replies: data } }
+        );
     }
     catch (error) {
         result = { error: error };
@@ -70,7 +72,7 @@ controllers.insertReply = async function (collectionName, data) {
 }
 
 // get all threads in a board
-controllers.getThreads = async function (collectionName) {
+controllers.getThreads = async function (collectionName, threadLimit, repliesLimit) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
@@ -86,11 +88,11 @@ controllers.getThreads = async function (collectionName) {
                     text: 1,
                     created_on: 1,
                     bumped_on: 1,
-                    'replies.limit': 3,
+                    replies: 1,
                     replycount: { $size: '$replies' }
                 }
             }
-        ]).toArray();
+        ]).sort({ bumped_on: -1 }).limit(threadLimit).toArray();
     }
     catch (error) {
         result = { error: error };

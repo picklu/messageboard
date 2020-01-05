@@ -55,9 +55,9 @@ controllers.insertReply = async function (collectionName, threadId, data) {
     const collection = db.collection(collectionName);
     let result;
     try {
-        result = await collection.update(
+        result = await collection.updateOne(
             { _id: threadId },
-            { $addToSet: { replies: data } }
+            { $set: { bumped_on: data.created_on }, $addToSet: { replies: data } }
         );
     }
     catch (error) {
@@ -81,18 +81,21 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
     const collection = db.collection(collectionName);
     let result;
     try {
-        result = await collection.aggregate([
-            {
-                $project: {
-                    _id: 1,
-                    text: 1,
-                    created_on: 1,
-                    bumped_on: 1,
-                    replies: 1,
-                    replycount: { $size: '$replies' }
+        result = await collection
+            .aggregate([
+                {
+                    $project: {
+                        _id: 1,
+                        text: 1,
+                        created_on: 1,
+                        bumped_on: 1,
+                        replies: 1,
+                        replycount: { $size: '$replies' }
+                    }
                 }
-            }
-        ]).sort({ bumped_on: -1 }).limit(threadLimit).toArray();
+            ])
+            .sort({ bumped_on: -1 })
+            .limit(threadLimit).toArray();
     }
     catch (error) {
         result = { error: error };

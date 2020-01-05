@@ -16,7 +16,7 @@ var ObjectId = require('mongodb').ObjectId;
 var controllers = require('../controllers/handlers');
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) || 10;
-const THREAD_LIMIT = process.env.THREAD_LIMIT || 3;
+const THREAD_LIMIT = process.env.THREAD_LIMIT || 10;
 const REPLIES_LIMIT = process.env.REPLIES_LIMIT || 3;
 
 module.exports = function (app) {

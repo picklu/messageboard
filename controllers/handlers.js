@@ -24,7 +24,6 @@ controllers.connectDB = async function () {
 controllers.insertThread = async function (collectionName, data) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
-        console.log("== db insert data error ==>", dbConn.error);
         return { error: dbConn.error };
     }
 
@@ -83,12 +82,11 @@ controllers.getThreads = async function (collectionName) {
         result = await collection.aggregate([
             {
                 $project: {
-                    _id,
-                    text,
-                    reported,
-                    created_on,
-                    bumped_on,
-                    replies,
+                    _id: 1,
+                    text: 1,
+                    created_on: 1,
+                    bumped_on: 1,
+                    'replies.limit': 3,
                     replycount: { $size: '$replies' }
                 }
             }

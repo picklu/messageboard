@@ -10,7 +10,11 @@
 
 
 var expect = require('chai').expect;
+var bcrypt = require('bcrypt');
+
 var controllers = require('../controllers/handlers');
+
+const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) || 10;
 
 module.exports = function (app) {
 
@@ -19,23 +23,32 @@ module.exports = function (app) {
       const board = req.params.board;
       const result = await controllers.getThreads(board);
 
+      console.log('== get result ==>', result);
+
       if (result && result.error) {
         res.json([]);
       }
-      else if (result && Array.isArray(result)) {
-        res.json(result);
+      else if (result) {
+        res.json([].concat(result));
       }
     })
 
-    .post(function (req, res) {
+    .post(async function (req, res) {
       const now = new Date().toISOString();
       const board = req.params.board;
-      const data = req.body;
+      const data = {};
+      const hash = bcrypt.hashSync(req.body.delete_password, SALT_ROUNDS);
+      data.delete_password = hash;
+      data.text = req.body.text;
       data.created_on = now;
       data.bumped_on = now;
       data.reported = false;
+      data.replies = [];
 
-      res.redirect('/b/' + board + '/');
+      const result = await controllers.insertThread(board, data);
+      console.log('== insert result ==>', result);
+
+      res.redirect(`/b/${board}/`);
     })
 
     .put(function (req, res) {

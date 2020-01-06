@@ -130,7 +130,8 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
 }
 
 // get all replies in a thread
-controllers.getReplies = async function (collectionName, id) {
+controllers.getReplies = async function (collectionName, threadId) {
+    console.log(collectionName, threadId);
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
@@ -139,7 +140,18 @@ controllers.getReplies = async function (collectionName, id) {
     const collection = db.collection(collectionName);
     let result;
     try {
-        result = await collection.findOne({ _id: id });
+        result = await collection
+            .findOne(
+                {
+                    _id: threadId
+                },
+                {
+                    delete_password: 0,
+                    reported: 0,
+                    "replies.delete_password": 0,
+                    "replies.reported": 0
+                }
+            );
     }
     catch (error) {
         result = { error: error };

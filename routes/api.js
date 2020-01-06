@@ -69,8 +69,17 @@ module.exports = function (app) {
   })
 
   app.route('/api/replies/:board')
-    .get(function (req, res) {
-
+    .get(async function (req, res) {
+      const board = req.params.board;
+      const threadId = ObjectId(req.query.thread_id);
+      const result = await controllers.getReplies(board, threadId);
+      console.log('== result ==>', result);
+      if (result && result.error) {
+        return res.json([]);
+      }
+      else if (result) {
+        return res.json(result);
+      }
     })
 
     .post(async function (req, res) {

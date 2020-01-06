@@ -26,13 +26,20 @@ module.exports = function (app) {
       const board = req.params.board;
       const result = await controllers.getThreads(board, THREAD_LIMIT, REPLIES_LIMIT);
 
-      console.log('== get result ==>', result);
-
       if (result && result.error) {
-        res.json([]);
+        return res.json([]);
       }
       else if (result) {
-        res.json(result);
+        return res.json(result.map(thread => {
+          thread.bumped_on = thread.bumped_on[0];
+          thread.created_on = thread.created_on[0];
+          thread.text = thread.text[0];
+          if (thread.replycount === 1 && thread.replies[0]._id == undefined) {
+            thread.replies = [];
+            thread.replycount = 0;
+          }
+          return thread;
+        }));
       }
     })
 
@@ -49,7 +56,6 @@ module.exports = function (app) {
       data.replies = [];
 
       const result = await controllers.insertThread(board, data);
-      console.log('== insert result ==>', result);
 
       res.redirect(`/b/${board}/`);
     })

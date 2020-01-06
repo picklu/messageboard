@@ -84,7 +84,10 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
         result = await collection
             .aggregate([
                 {
-                    $unwind: '$replies'
+                    $unwind: {
+                        path: '$replies',
+                        preserveNullAndEmptyArrays: true
+                    }
                 },
                 {
                     $group: {
@@ -108,7 +111,7 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
                         created_on: 1,
                         bumped_on: 1,
                         replies: { $slice: ['$replies', 0, repliesLimit] },
-                        replycount: { $size: '$replies' }
+                        replycount: { $size: "$replies" }
                     }
                 }
             ])

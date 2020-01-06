@@ -32,7 +32,7 @@ module.exports = function (app) {
         res.json([]);
       }
       else if (result) {
-        res.json([].concat(result));
+        res.json(result);
       }
     })
 

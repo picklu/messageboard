@@ -84,6 +84,24 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
         result = await collection
             .aggregate([
                 {
+                    $unwind: '$replies'
+                },
+                {
+                    $group: {
+                        _id: '$_id',
+                        bumped_on: { $addToSet: '$bumped_on' },
+                        created_on: { $addToSet: '$created_on' },
+                        text: { $addToSet: '$text' },
+                        replies: {
+                            $push: {
+                                _id: '$replies._id',
+                                created_on: '$replies.created_on',
+                                text: '$replies.text'
+                            }
+                        }
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         text: 1,

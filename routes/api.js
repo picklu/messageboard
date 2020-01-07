@@ -14,7 +14,7 @@ const expect = require('chai').expect;
 const ObjectId = require('mongodb').ObjectId;
 
 const controllers = require('../controllers/handlers');
-const trace = require('../controllers/helpers').trace;
+const { log, trace } = require('../controllers/helpers');
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) || 10;
 const THREAD_LIMIT = process.env.THREAD_LIMIT || 10;
@@ -62,13 +62,27 @@ module.exports = function (app) {
       res.redirect(`/b/${board}/`);
     })
 
-    .put(function (req, res) {
+    .put(async function (req, res) {
+      const board = req.params.board;
+      const threadId = ObjectId(req.body.report_id);
 
+      log(threadId, 'api.js', 69);
+
+      const result = await controllers.reportToThread(board, threadId);
+      if (result && result.error) {
+        return res.send('fail');
+      }
+      else if (result) {
+        return res.send('success');
+      }
+      else {
+        return res.send('fail');
+      }
     })
 
-  delete (function (req, res) {
+    .delete(function (req, res) {
 
-  })
+    })
 
   app.route('/api/replies/:board')
     .get(async function (req, res) {
@@ -104,8 +118,8 @@ module.exports = function (app) {
 
     })
 
-  delete (function (req, res) {
+    .delete(function (req, res) {
 
-  });
+    });
 
 };

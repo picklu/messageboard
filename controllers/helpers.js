@@ -10,9 +10,10 @@ helpers.trace = function (message = '') {
 
 }
 
-helpers.log = function (message = '') {
+helpers.log = function (message = '', script = '', line = 0) {
     console.log('<==============================');
-    console.log(message);
+    if (script && line) console.log(`In "${script}" at line ${line}.`);
+    if (message) console.log(message);
     console.log('==============================>');
 }
 

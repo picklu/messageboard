@@ -2,7 +2,7 @@ const MongoClient = require('mongodb').MongoClient;
 const MONGODB_CONNECTION_STRING = process.env.DB_LOCAL || process.env.DB;
 const DB_NAME = process.env.DB_NAME;
 
-const trace = require('../controllers/helpers').trace;
+const { log, trace } = require('../controllers/helpers');
 
 const controllers = {};
 
@@ -59,6 +59,36 @@ controllers.insertReply = async function (collectionName, threadId, data) {
         result = await collection.updateOne(
             { _id: threadId },
             { $set: { bumped_on: data.created_on }, $addToSet: { replies: data } }
+        );
+    }
+    catch (error) {
+        result = { error: error };
+    }
+    finally {
+        if (client) {
+            await client.close();
+        }
+        return result;
+    }
+}
+
+// Report to a thread in a board
+controllers.reportToThread = async function (collectionName, threadId) {
+    log(threadId)
+    const dbConn = await controllers.connectDB();
+    if (dbConn.error) {
+        return { error: dbConn.error };
+    }
+
+    const { client, db } = dbConn;
+    const collection = db.collection(collectionName);
+    let result;
+    try {
+        result = await collection.updateOne(
+            { _id: threadId },
+            {
+                $set: { reported: true }
+            }
         );
     }
     catch (error) {
@@ -148,9 +178,9 @@ controllers.getReplies = async function (collectionName, threadId) {
                 {
                     fields: {
                         delete_password: 0,
-                        reported: 0,
+                        // reported: 1,
                         "replies.delete_password": 0,
-                        "replies.reported": 0
+                        // "replies.reported": 0
                     }
                 }
             );

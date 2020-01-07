@@ -47,7 +47,6 @@ controllers.insertThread = async function (collectionName, data) {
 controllers.insertReply = async function (collectionName, threadId, data) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
-        console.log("== db insert data error ==>", dbConn.error);
         return { error: dbConn.error };
     }
 
@@ -131,7 +130,6 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
 
 // get all replies in a thread
 controllers.getReplies = async function (collectionName, threadId) {
-    console.log(collectionName, threadId);
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };

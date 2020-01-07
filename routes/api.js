@@ -21,10 +21,6 @@ const THREAD_LIMIT = process.env.THREAD_LIMIT || 10;
 const REPLIES_LIMIT = process.env.REPLIES_LIMIT || 3;
 
 
-
-trace('It\'s a test!');
-
-
 module.exports = function (app) {
 
   app.route('/api/threads/:board')

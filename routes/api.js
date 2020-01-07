@@ -70,7 +70,7 @@ module.exports = function (app) {
       if (result && result.error) {
         return res.send('fail');
       }
-      else if (result) {
+      else if (result && result.matchedCount) {
         return res.send('success');
       }
       else {

@@ -9,12 +9,12 @@
 'use strict';
 
 
-var bcrypt = require('bcrypt');
-var expect = require('chai').expect;
-var ObjectId = require('mongodb').ObjectId;
+const bcrypt = require('bcrypt');
+const expect = require('chai').expect;
+const ObjectId = require('mongodb').ObjectId;
 
-var controllers = require('../controllers/handlers');
-var trace = require('../controllers/helpers').trace;
+const controllers = require('../controllers/handlers');
+const trace = require('../controllers/helpers').trace;
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) || 10;
 const THREAD_LIMIT = process.env.THREAD_LIMIT || 10;

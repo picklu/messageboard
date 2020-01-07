@@ -1,6 +1,8 @@
-var MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 const MONGODB_CONNECTION_STRING = process.env.DB_LOCAL || process.env.DB;
 const DB_NAME = process.env.DB_NAME;
+
+const trace = require('../controllers/helpers').trace;
 
 const controllers = {};
 

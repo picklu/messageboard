@@ -14,10 +14,16 @@ var expect = require('chai').expect;
 var ObjectId = require('mongodb').ObjectId;
 
 var controllers = require('../controllers/handlers');
+var trace = require('../controllers/helpers').trace;
 
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS) || 10;
 const THREAD_LIMIT = process.env.THREAD_LIMIT || 10;
 const REPLIES_LIMIT = process.env.REPLIES_LIMIT || 3;
+
+
+
+trace();
+
 
 module.exports = function (app) {
 
@@ -73,7 +79,6 @@ module.exports = function (app) {
       const board = req.params.board;
       const threadId = ObjectId(req.query.thread_id);
       const result = await controllers.getReplies(board, threadId);
-      console.log('== result ==>', result);
       if (result && result.error) {
         return res.json([]);
       }

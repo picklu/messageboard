@@ -66,8 +66,6 @@ module.exports = function (app) {
       const board = req.params.board;
       const threadId = ObjectId(req.body.report_id);
 
-      log(threadId, 'api.js', 69);
-
       const result = await controllers.reportToThread(board, threadId);
       if (result && result.error) {
         return res.send('fail');

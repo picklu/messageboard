@@ -74,7 +74,6 @@ controllers.insertReply = async function (collectionName, threadId, data) {
 
 // Report to a thread in a board
 controllers.reportToThread = async function (collectionName, threadId) {
-    log(threadId)
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };

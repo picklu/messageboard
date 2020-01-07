@@ -101,6 +101,39 @@ controllers.reportToThread = async function (collectionName, threadId) {
     }
 }
 
+// Report to a reply in a thread of a board
+controllers.reportToReply = async function (collectionName, threadId, replyId) {
+    const dbConn = await controllers.connectDB();
+    if (dbConn.error) {
+        return { error: dbConn.error };
+    }
+
+    const { client, db } = dbConn;
+    const collection = db.collection(collectionName);
+    let result;
+    try {
+        result = await collection.updateOne(
+            {
+                _id: threadId,
+                'replies._id': replyId
+            },
+            {
+                $set: { 'replies.$.reported': true }
+            }
+        );
+    }
+    catch (error) {
+        result = { error: error };
+    }
+    finally {
+        if (client) {
+            await client.close();
+        }
+        return result;
+    }
+}
+
+
 // get all threads in a board
 controllers.getThreads = async function (collectionName, threadLimit, repliesLimit) {
     const dbConn = await controllers.connectDB();

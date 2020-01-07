@@ -112,8 +112,21 @@ module.exports = function (app) {
       res.redirect(`/b/${board}/`);
     })
 
-    .put(function (req, res) {
+    .put(async function (req, res) {
+      const board = req.params.board;
+      const threadId = ObjectId(req.body.thread_id);
+      const replyId = ObjectId(req.body.reply_id);
 
+      const result = await controllers.reportToReply(board, threadId, replyId);
+      if (result && result.error) {
+        return res.send('fail');
+      }
+      else if (result && result.matchedCount) {
+        return res.send('success');
+      }
+      else {
+        return res.send('fail');
+      }
     })
 
     .delete(function (req, res) {

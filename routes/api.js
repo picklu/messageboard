@@ -22,7 +22,7 @@ const REPLIES_LIMIT = process.env.REPLIES_LIMIT || 3;
 
 
 
-trace();
+trace('It\'s a test!');
 
 
 module.exports = function (app) {

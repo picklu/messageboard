@@ -146,10 +146,12 @@ controllers.getReplies = async function (collectionName, threadId) {
                     _id: threadId
                 },
                 {
-                    delete_password: 0,
-                    reported: 0,
-                    "replies.delete_password": 0,
-                    "replies.reported": 0
+                    fields: {
+                        delete_password: 0,
+                        reported: 0,
+                        "replies.delete_password": 0,
+                        "replies.reported": 0
+                    }
                 }
             );
     }

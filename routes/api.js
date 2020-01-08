@@ -78,8 +78,29 @@ module.exports = function (app) {
       }
     })
 
-    .delete(function (req, res) {
+    .delete(async function (req, res) {
+      const board = req.params.board;
+      const threadId = ObjectId(req.body.thread_id);
+      const delete_password = req.body.delete_password;
 
+      let hash = await controllers.getThreadPassword(board, threadId);
+      if (hash && hash.delete_password) {
+        if (bcrypt.compareSync(delete_password, hash.delete_password)) {
+          const result = await controllers.deleteThread(board, threadId);
+          if (result && result.error) {
+            return res.send('fail');
+          }
+          else if (result && result.ok) {
+            return res.send('success');
+          }
+          else {
+            return res.send('incorrect password');
+          }
+        }
+      }
+      else {
+        return res.send('fail');
+      }
     })
 
   app.route('/api/replies/:board')

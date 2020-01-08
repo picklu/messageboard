@@ -14,7 +14,7 @@ controllers.connectDB = async function () {
         result = { client: client, db: client.db(DB_NAME) };
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         return result;
@@ -35,7 +35,7 @@ controllers.insertThread = async function (board, data) {
         result = await collection.insertOne(data);
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -62,7 +62,7 @@ controllers.insertReply = async function (board, threadId, data) {
         );
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -91,7 +91,7 @@ controllers.reportToThread = async function (board, threadId) {
         );
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -123,7 +123,7 @@ controllers.reportToReply = async function (board, threadId, replyId) {
         );
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -182,7 +182,7 @@ controllers.getThreads = async function (board, threadLimit, repliesLimit) {
             .limit(threadLimit).toArray();
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -218,7 +218,7 @@ controllers.getReplies = async function (board, threadId) {
             );
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -246,6 +246,7 @@ controllers.getThreadPassword = async function (board, threadId) {
                 },
                 {
                     fields: {
+                        _id: 0,
                         bumped_on: 0,
                         created_on: 0,
                         text: 0,
@@ -256,7 +257,7 @@ controllers.getThreadPassword = async function (board, threadId) {
             );
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -298,7 +299,7 @@ controllers.getRepliesPassword = async function (board, threadId, repliesId) {
             );
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -321,7 +322,7 @@ controllers.deleteThread = async function (board, threadId) {
         result = await collection.findOneAndDelete({ _id: threadId });
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {
@@ -349,7 +350,7 @@ controllers.deleteReply = async function (board, id) {
         }
     }
     catch (error) {
-        result = { error: error };
+        result = { error };
     }
     finally {
         if (client) {

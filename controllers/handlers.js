@@ -22,14 +22,14 @@ controllers.connectDB = async function () {
 }
 
 // Create a new thread to a board
-controllers.insertThread = async function (collectionName, data) {
+controllers.insertThread = async function (board, data) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
 
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         result = await collection.insertOne(data);
@@ -46,14 +46,14 @@ controllers.insertThread = async function (collectionName, data) {
 }
 
 // Create a new reply to a thread in a board
-controllers.insertReply = async function (collectionName, threadId, data) {
+controllers.insertReply = async function (board, threadId, data) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
 
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         result = await collection.updateOne(
@@ -73,14 +73,14 @@ controllers.insertReply = async function (collectionName, threadId, data) {
 }
 
 // Report to a thread in a board
-controllers.reportToThread = async function (collectionName, threadId) {
+controllers.reportToThread = async function (board, threadId) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
 
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         result = await collection.updateOne(
@@ -102,14 +102,14 @@ controllers.reportToThread = async function (collectionName, threadId) {
 }
 
 // Report to a reply in a thread of a board
-controllers.reportToReply = async function (collectionName, threadId, replyId) {
+controllers.reportToReply = async function (board, threadId, replyId) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
 
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         result = await collection.updateOne(
@@ -135,13 +135,13 @@ controllers.reportToReply = async function (collectionName, threadId, replyId) {
 
 
 // get all threads in a board
-controllers.getThreads = async function (collectionName, threadLimit, repliesLimit) {
+controllers.getThreads = async function (board, threadLimit, repliesLimit) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         result = await collection
@@ -193,13 +193,13 @@ controllers.getThreads = async function (collectionName, threadLimit, repliesLim
 }
 
 // get all replies in a thread
-controllers.getReplies = async function (collectionName, threadId) {
+controllers.getReplies = async function (board, threadId) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         result = await collection
@@ -229,13 +229,13 @@ controllers.getReplies = async function (collectionName, threadId) {
 }
 
 // delete a thread in a board
-controllers.deleteThread = async function (collectionName, id) {
+controllers.deleteThread = async function (board, id) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         if (id) {
@@ -257,13 +257,13 @@ controllers.deleteThread = async function (collectionName, id) {
 }
 
 // delete a reply of a thread
-controllers.deleteReply = async function (collectionName, id) {
+controllers.deleteReply = async function (board, id) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
     }
     const { client, db } = dbConn;
-    const collection = db.collection(collectionName);
+    const collection = db.collection(board);
     let result;
     try {
         if (id) {

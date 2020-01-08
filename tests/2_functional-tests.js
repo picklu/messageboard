@@ -17,17 +17,17 @@ chai.use(chaiHttp);
 suite('Functional Tests', function () {
 
   suite('API ROUTING FOR /api/threads/:board', function () {
-    var threadTexts = ['A test thread 1', 'A test thread 2', 'A test thread 3'];
-    var replyTexts = ['A test reply 1', 'A test reply 2', 'A test reply 3'];
-    var delete_passwords = ['pass123', 'pass456', 'pass789'];
-    var threadIdOne, threadIdTwo, threadIdThree;
-    var replyIdOne, replyIdTwo, replyIdThree;
+    var threadTexts = ['A test thread 1', 'A test thread 2'];
+    var replyTexts = ['A test reply 1', 'A test reply 2'];
+    var delete_passwords = ['pass123', 'pass456'];
+    var threadIdOne, threadIdTwo;
+    var replyIdOne, replyIdTwo;
 
     suite('POST', function () {
 
       test('Test POST /api/threads/board', function (done) {
 
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < 2; i++) {
           chai.request(server)
             .post('/api/threads/test')
             .send({
@@ -63,18 +63,53 @@ suite('Functional Tests', function () {
             assert.notProperty(res.body[0], 'delete_password');
             threadIdOne = res.body[0]._id;
             threadIdTwo = res.body[1]._id;
-            threadIdThree = res.body[2]._id;
             assert.isArray(res.body[0].replies);
-            assert.equal(res.body[0].text, threadTexts[2]);
+            assert.equal(res.body[0].text, threadTexts[1]); // latest bumped first
+            done();
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      })
+    });
+
+    suite('DELETE', function () {
+
+      test('Test DELETE /api/thread/board with a wrong password', function (done) {
+        chai.request(server)
+          .delete('/api/threads/test')
+          .send({
+            thread_id: threadIdOne,
+            delete_password: 'wrongpass'
+          })
+          .then(function (res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'incorrect password');
             done();
           })
           .catch(function (error) {
             console.log(e)
           })
       })
-    });
 
-    suite('DELETE', function () {
+      test('Test DELETE /api/thread/board with a correct password', function (done) {
+        chai.request(server)
+          .delete('/api/threads/test')
+          .send({
+            thread_id: threadIdOne,
+            delete_password: delete_passwords[0]
+          })
+          .then(function (res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          })
+          .catch(function (error) {
+            console.log(e)
+          })
+      })
+
+
 
     });
 

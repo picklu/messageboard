@@ -150,8 +150,30 @@ module.exports = function (app) {
       }
     })
 
-    .delete(function (req, res) {
+    .delete(async function (req, res) {
+      const board = req.params.board;
+      const threadId = ObjectId(req.body.thread_id);
+      const replyId = ObjectId(req.body.reply_id);
+      const delete_password = req.body.delete_password;
 
+      let hash = await controllers.getReplyPassword(board, threadId, replyId);
+      if (hash && hash.replies && hash.replies[0] && hash.replies[0].delete_password) {
+        if (bcrypt.compareSync(delete_password, hash.replies[0].delete_password)) {
+          const result = await controllers.deleteReply(board, threadId, replyId);
+          if (result && result.error) {
+            return res.send('fail');
+          }
+          else if (result && result.result && result.result.ok) {
+            return res.send('success');
+          }
+          else {
+            return res.send('incorrect password');
+          }
+        }
+      }
+      else {
+        return res.send('fail');
+      }
     });
 
 };

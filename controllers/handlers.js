@@ -269,7 +269,7 @@ controllers.getThreadPassword = async function (board, threadId) {
 
 
 // get all replies in a thread
-controllers.getRepliesPassword = async function (board, threadId, repliesId) {
+controllers.getReplyPassword = async function (board, threadId, replyId) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
@@ -282,15 +282,17 @@ controllers.getRepliesPassword = async function (board, threadId, repliesId) {
             .findOne(
                 {
                     _id: threadId,
-                    'replies._id': repliesId
+                    'replies._id': replyId
                 },
                 {
                     fields: {
+                        _id: 0,
                         bumped_on: 0,
                         created_on: 0,
                         text: 0,
                         delete_password: 0,
                         reported: 0,
+                        "replies._id": 0,
                         "replies.text": 0,
                         "replies.created_on": 0,
                         "replies.reported": 0
@@ -333,7 +335,7 @@ controllers.deleteThread = async function (board, threadId) {
 }
 
 // delete a reply of a thread
-controllers.deleteReply = async function (board, id) {
+controllers.deleteReply = async function (board, threadId, replyId) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
@@ -342,12 +344,10 @@ controllers.deleteReply = async function (board, id) {
     const collection = db.collection(board);
     let result;
     try {
-        if (id) {
-            result = await collection.findOneAndDelete({ _id: id });
-        }
-        else {
-            result = await collection.deleteMany({});
-        }
+        result = await collection.updateOne(
+            { _id: threadId },
+            { $pull: { replies: { _id: replyId } } }
+        );
     }
     catch (error) {
         result = { error };

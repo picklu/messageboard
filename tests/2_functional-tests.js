@@ -97,7 +97,7 @@ suite('Functional Tests', function () {
           .delete('/api/threads/test')
           .send({
             thread_id: threadIdOne,
-            delete_password: delete_passwords[0]
+            delete_password: delete_passwords[1]
           })
           .then(function (res) {
             assert.equal(res.status, 200);

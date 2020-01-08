@@ -228,8 +228,9 @@ controllers.getReplies = async function (board, threadId) {
     }
 }
 
-// delete a thread in a board
-controllers.deleteThread = async function (board, id) {
+
+// get all replies in a thread
+controllers.getThreadPassword = async function (board, threadId) {
     const dbConn = await controllers.connectDB();
     if (dbConn.error) {
         return { error: dbConn.error };
@@ -238,12 +239,86 @@ controllers.deleteThread = async function (board, id) {
     const collection = db.collection(board);
     let result;
     try {
-        if (id) {
-            result = await collection.findOneAndDelete({ _id: id });
+        result = await collection
+            .findOne(
+                {
+                    _id: threadId
+                },
+                {
+                    fields: {
+                        bumped_on: 0,
+                        created_on: 0,
+                        text: 0,
+                        reported: 0,
+                        replies: 0
+                    }
+                }
+            );
+    }
+    catch (error) {
+        result = { error: error };
+    }
+    finally {
+        if (client) {
+            await client.close();
         }
-        else {
-            result = await collection.deleteMany({});
+        return result;
+    }
+}
+
+
+// get all replies in a thread
+controllers.getRepliesPassword = async function (board, threadId, repliesId) {
+    const dbConn = await controllers.connectDB();
+    if (dbConn.error) {
+        return { error: dbConn.error };
+    }
+    const { client, db } = dbConn;
+    const collection = db.collection(board);
+    let result;
+    try {
+        result = await collection
+            .findOne(
+                {
+                    _id: threadId,
+                    'replies._id': repliesId
+                },
+                {
+                    fields: {
+                        bumped_on: 0,
+                        created_on: 0,
+                        text: 0,
+                        delete_password: 0,
+                        reported: 0,
+                        "replies.text": 0,
+                        "replies.created_on": 0,
+                        "replies.reported": 0
+                    }
+                }
+            );
+    }
+    catch (error) {
+        result = { error: error };
+    }
+    finally {
+        if (client) {
+            await client.close();
         }
+        return result;
+    }
+}
+
+// delete a thread in a board
+controllers.deleteThread = async function (board, threadId) {
+    const dbConn = await controllers.connectDB();
+    if (dbConn.error) {
+        return { error: dbConn.error };
+    }
+    const { client, db } = dbConn;
+    const collection = db.collection(board);
+    let result;
+    try {
+        result = await collection.findOneAndDelete({ _id: threadId });
     }
     catch (error) {
         result = { error: error };

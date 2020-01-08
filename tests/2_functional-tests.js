@@ -17,32 +17,35 @@ chai.use(chaiHttp);
 suite('Functional Tests', function () {
 
   suite('API ROUTING FOR /api/threads/:board', function () {
-    var threadText = 'A test thread';
-    var replyText = 'A test reply';
-    var delete_password = 'pass123';
-    var threadId;
-    var replyId;
+    var threadTexts = ['A test thread 1', 'A test thread 2', 'A test thread 3'];
+    var replyTexts = ['A test reply 1', 'A test reply 2', 'A test reply 3'];
+    var delete_passwords = ['pass123', 'pass456', 'pass789'];
+    var threadIdOne, threadIdTwo, threadIdThree;
+    var replyIdOne, replyIdTwo, replyIdThree;
 
     suite('POST', function () {
 
       test('Test POST /api/threads/board', function (done) {
-        chai.request(server)
-          .post('/api/threads/test')
-          .send({
-            delete_password: delete_password,
-            text: threadText
-          })
-          .then(function (res) {
-            assert.equal(res.status, 200);
-            assert.isArray(res.redirects);
-            assert.include(res.redirects.join(''), 'test');
-            done();
-          })
-          .catch(function (error) {
-            console.log(e)
-          })
+
+        for (var i = 0; i < 3; i++) {
+          chai.request(server)
+            .post('/api/threads/test')
+            .send({
+              delete_password: delete_passwords[i],
+              text: threadTexts[i]
+            })
+            .then(function (res) {
+              assert.equal(res.status, 200);
+              assert.isArray(res.redirects);
+              assert.include(res.redirects.join(''), 'test');
+            })
+            .catch(function (error) {
+              console.log(e)
+            })
+        }
+        done();
       })
-    });
+    })
 
     suite('GET', function () {
 
@@ -58,9 +61,11 @@ suite('Functional Tests', function () {
             assert.property(res.body[0], 'text');
             assert.property(res.body[0], 'replies');
             assert.notProperty(res.body[0], 'delete_password');
-            threadId = res.body[0]._id;
+            threadIdOne = res.body[0]._id;
+            threadIdTwo = res.body[1]._id;
+            threadIdThree = res.body[2]._id;
             assert.isArray(res.body[0].replies);
-            assert.equal(res.body[0].text, threadText);
+            assert.equal(res.body[0].text, threadTexts[2]);
             done();
           })
           .catch(function (error) {

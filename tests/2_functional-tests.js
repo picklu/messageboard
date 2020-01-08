@@ -17,6 +17,11 @@ chai.use(chaiHttp);
 suite('Functional Tests', function () {
 
   suite('API ROUTING FOR /api/threads/:board', function () {
+    var threadText = 'A test thread';
+    var replyText = 'A test reply';
+    var delete_password = 'pass123';
+    var threadId;
+    var replyId;
 
     suite('POST', function () {
 
@@ -24,8 +29,8 @@ suite('Functional Tests', function () {
         chai.request(server)
           .post('/api/threads/test')
           .send({
-            delete_password: 'pass123',
-            text: 'A test thread'
+            delete_password: delete_password,
+            text: threadText
           })
           .then(function (res) {
             assert.equal(res.status, 200);
@@ -37,11 +42,31 @@ suite('Functional Tests', function () {
             console.log(e)
           })
       })
-
     });
 
     suite('GET', function () {
 
+      test('Test GET /api/threads/board', function (done) {
+        chai.request(server)
+          .get('/api/threads/test')
+          .then(function (res) {
+            assert.equal(res.status, 200);
+            assert.isArray(res.body);
+            assert.property(res.body[0], '_id');
+            assert.property(res.body[0], 'bumped_on');
+            assert.property(res.body[0], 'created_on');
+            assert.property(res.body[0], 'text');
+            assert.property(res.body[0], 'replies');
+            assert.notProperty(res.body[0], 'delete_password');
+            threadId = res.body[0]._id;
+            assert.isArray(res.body[0].replies);
+            assert.equal(res.body[0].text, threadText);
+            done();
+          })
+          .catch(function (error) {
+            console.log(e)
+          })
+      })
     });
 
     suite('DELETE', function () {

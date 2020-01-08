@@ -57,8 +57,7 @@ module.exports = function (app) {
       data.reported = false;
       data.replies = [];
 
-      const result = await controllers.insertThread(board, data);
-
+      await controllers.insertThread(board, data);
       res.redirect(`/b/${board}/`);
     })
 

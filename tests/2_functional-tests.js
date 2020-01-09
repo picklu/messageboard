@@ -156,7 +156,34 @@ suite('Functional Tests', function () {
     });
 
     suite('GET', function () {
-
+      test('Test GET /api/replies/board', function (done) {
+        chai.request(server)
+          .get('/api/replies/test')
+          .query({
+            thread_id: threadIdTwo
+          })
+          .then(function (res) {
+            assert.equal(res.status, 200);
+            assert.property(res.body, '_id');
+            assert.property(res.body, 'bumped_on');
+            assert.property(res.body, 'created_on');
+            assert.property(res.body, 'text');
+            assert.property(res.body, 'replies');
+            assert.notProperty(res.body, 'delete_password');
+            assert.isArray(res.body.replies);
+            assert.equal(res.body.replies.length, 2);
+            assert.property(res.body.replies[0], '_id');
+            assert.property(res.body.replies[0], 'created_on');
+            assert.property(res.body.replies[0], 'text');
+            assert.notProperty(res.body.replies[0], 'delete_password')
+            assert.equal(res.body._id, threadIdTwo);
+            assert.equal(res.body.text, threadTexts[0]);
+            done();
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      })
     });
 
     suite('PUT', function () {

@@ -169,8 +169,11 @@ module.exports = function (app) {
             return res.send('success');
           }
           else {
-            return res.send('incorrect password');
+            return res.send('fail');
           }
+        }
+        else {
+          return res.send('incorrect password');
         }
       }
       else {

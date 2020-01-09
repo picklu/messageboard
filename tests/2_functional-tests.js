@@ -89,7 +89,7 @@ suite('Functional Tests', function () {
             done();
           })
           .catch(function (error) {
-            console.log(e)
+            console.log(error)
           })
       })
 
@@ -210,9 +210,41 @@ suite('Functional Tests', function () {
     });
 
     suite('DELETE', function () {
+      test('Test DELETE /api/replies/:board with a wrong password', function (done) {
+        chai.request(server)
+          .delete('/api/replies/test')
+          .send({
+            thread_id: threadIdTwo,
+            reply_id: replyIdOne,
+            delete_password: 'wrongpass'
+          })
+          .then(function (res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'incorrect password');
+            done();
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      })
 
+      test('Test DELETE /api/replies/:board with a correct password', function (done) {
+        chai.request(server)
+          .delete('/api/replies/test')
+          .send({
+            thread_id: threadIdTwo,
+            reply_id: replyIdOne,
+            delete_password: delete_passwords[0]
+          })
+          .then(function (res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      })
     });
-
   });
-
 });

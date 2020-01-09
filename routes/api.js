@@ -103,7 +103,7 @@ module.exports = function (app) {
       else {
         return res.send('fail');
       }
-    })
+    });
 
   app.route('/api/replies/:board')
     .get(async function (req, res) {
@@ -130,7 +130,7 @@ module.exports = function (app) {
       data.text = req.body.text;
       data.reported = false;
 
-      const result = await controllers.insertReply(board, threadId, data);
+      await controllers.insertReply(board, threadId, data);
 
       res.redirect(`/b/${board}/`);
     })

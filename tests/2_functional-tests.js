@@ -62,10 +62,10 @@ suite('Functional Tests', function () {
             assert.property(res.body[0], 'text');
             assert.property(res.body[0], 'replies');
             assert.notProperty(res.body[0], 'delete_password');
-            threadIdOne = res.body[0]._id;
-            threadIdTwo = res.body[1]._id;
             assert.isArray(res.body[0].replies);
             assert.equal(res.body[0].text, threadTexts[1]); // latest bumped first
+            threadIdOne = res.body[0]._id;
+            threadIdTwo = res.body[1]._id;
             done();
           })
           .catch(function (error) {
@@ -178,6 +178,10 @@ suite('Functional Tests', function () {
             assert.notProperty(res.body.replies[0], 'delete_password')
             assert.equal(res.body._id, threadIdTwo);
             assert.equal(res.body.text, threadTexts[0]);
+
+            replyIdOne = res.body.replies[0]._id;
+            replyIdTwo = res.body.replies[1]._id;
+
             done();
           })
           .catch(function (error) {
@@ -187,7 +191,22 @@ suite('Functional Tests', function () {
     });
 
     suite('PUT', function () {
-
+      test('Test PUT /api/replies/:board report a reply', function (done) {
+        chai.request(server)
+          .put('/api/replies/test')
+          .send({
+            thread_id: threadIdTwo,
+            reply_id: replyIdOne
+          })
+          .then(function (res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'success');
+            done();
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+      })
     });
 
     suite('DELETE', function () {
